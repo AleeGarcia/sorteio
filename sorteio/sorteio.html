@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="sorteio.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SYF1Vwbh5N+2rbFawW1aG00FVZBsf5z5IFbqN" crossorigin="anonymous">
+
+    <title>Loteria SENAC</title>
+   
+</head>
+
+<body>
+    <div class="container">
+        <div class="select">
+            <select id="tipoSorteio" onchange="carregarSorteio()">
+                <option value="megasena">Mega Sena</option>
+                <option value="quina">Quina</option>
+                <option value="lotofacil">Loto Fácil</option>
+                <option value="lotomania">Loto Mania</option>
+                <option value="timemania">Time Mania</option>
+                <option value="diadesorte">Dia de Sorte</option>
+            </select>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </div>
+
+
+    <div id="sorteio"></div>
+
+    <script>
+        function carregarSorteio() {
+            const tipoSorteio = document.getElementById('tipoSorteio').value;
+            const url = `http://loteria.cronogramatds.online/sorteio/${tipoSorteio}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => exibirSorteio(data, tipoSorteio))
+                .catch(error => console.error('Erro ao informar o sorteio!', error));
+        }
+
+        function exibirSorteio(sorteio, tipoSorteio) {
+    const sorteioDiv = document.getElementById('sorteio');
+    const tema = sorteio.tema || sorteio.nome || 'Nome do Sorteio';
+    const numero = sorteio.numero || sorteio.codigo || 'Número do Sorteio';
+    const data = sorteio.data || sorteio.dataSorteio || 'Data do Sorteio';
+    const numerosSorteados = sorteio.numerosSorteados || [];
+
+    sorteioDiv.innerHTML = `
+        <h2>${tema}</h2>
+        <p> Sorteio de Número - ${numero}</p>
+        <p> Data do Sorteio - ${data}</p>
+        <div id="circulo">${criarCirculosNumeros(numerosSorteados)}</div>
+    `;
+
+            document.body.classList.remove('background-megasena', 'background-lotomania', 'background-quina', 'background-lotofacil', 'background-timemania', 'background-diadesorte');
+
+            if (tipoSorteio === "megasena") {
+          document.body.classList.add("background-megasena");
+        } else if (tipoSorteio === "quina") {
+          document.body.classList.add("background-quina");
+        } else if (tipoSorteio === "lotofacil") {
+          document.body.classList.add("background-lotofacil");
+        } else if (tipoSorteio === "lotomania") {
+          document.body.classList.add("background-lotomania");
+        } else if (tipoSorteio === "timemania") {
+          document.body.classList.add("background-timemania");
+        } else if (tipoSorteio === "diadesorte") {
+          document.body.classList.add("background-diadesorte");
+        }
+        }
+
+        function criarCirculosNumeros(numeros) {
+            return numeros.map(numero => `<div class="circulo">${numero}</div>`).join('');
+        }
+
+        carregarSorteio();
+    </script>
+</body>
+</html>
